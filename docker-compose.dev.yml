@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  neon-local:
+    image: neondatabase/neon-local:latest
+    container_name: neon-local
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env.development
+    # Explicit proxy flags (adjust per Neon Local docs/version)
+    command: ["proxy", "--listen", "0.0.0.0:5432", "--auto-branch"]
+
+  app:
+    build:
+      context: .
+      target: development
+    container_name: acquisitions-app-dev
+    env_file:
+      - .env.development
+    depends_on:
+      - neon-local
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - ./:/app
+      - /app/node_modules
