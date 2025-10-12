@@ -104,3 +104,9 @@ Important:
 - Prod up: `docker compose -f docker-compose.prod.yml up -d --build`
 - Prod migrate: `docker compose -f docker-compose.prod.yml exec app npm run db:migrate`
 - Prod down: `docker compose -f docker-compose.prod.yml down -v`
+
+
+### Khelif Abdellah
+
+## License
+This project is licensed under the MIT License — feel free to use and modify it.

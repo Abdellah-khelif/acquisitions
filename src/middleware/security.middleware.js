@@ -4,7 +4,12 @@ import logger from '#config/logger.js';
 
 const securityMiddleware = async (req, res, next) => {
   try {
-    const role = req.user?.rol || 'guest';
+    // Fully bypass in non-production to avoid blocking local testing
+    if (process.env.NODE_ENV !== 'production') {
+      return next();
+    }
+
+    const role = req.user?.role || 'guest';
 
     let limit;
     let message;
@@ -55,6 +60,10 @@ const securityMiddleware = async (req, res, next) => {
         path: req.path,
         method: req.method,
       });
+      // In development, allow but log so local testing isn't blocked
+      if (process.env.NODE_ENV !== 'production') {
+        return next();
+      }
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Request blocked by security policy',
@@ -68,6 +77,10 @@ const securityMiddleware = async (req, res, next) => {
         path: req.path,
         method: req.method,
       });
+      // In development, allow but log so local testing isn't blocked
+      if (process.env.NODE_ENV !== 'production') {
+        return next();
+      }
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Too many requests',
@@ -79,7 +92,7 @@ const securityMiddleware = async (req, res, next) => {
     console.log('Arcjet middleware error:', error);
     res.status(500).json({
       error: 'Internal server error',
-      mesaage: 'Somthing went wrong with security middleware',
+      message: 'Something went wrong with security middleware',
     });
   }
 };

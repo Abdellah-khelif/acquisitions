@@ -1,3 +1,7 @@
 node_modules
 .env.*.neon_local/
 .neon_local/
+
+.env
+.env.*
+config.bat
